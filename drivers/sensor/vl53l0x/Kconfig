@@ -1,0 +1,93 @@
+# Kconfig - VL53L0X SAR proximity sensor configuration options
+
+#
+# 
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# VL53L0X_GPIO1_EXT17
+# VL53L0X_XSHUT
+
+menuconfig Vl53L0X
+	bool "Vl53L0X I2C SAR Proximity Chip"
+	depends on I2C
+	default n
+	help
+	  Enable driver for SX9500 I2C-based SAR proximity sensor.
+
+config Vl53L0X_DEV_NAME
+	string "Vl53L0X device name"
+	depends on Vl53L0X
+	default "Vl53L0X"
+
+config Vl53L0X_I2C_ADDR
+	hex "Vl53L0X I2C slave address"
+	depends on Vl53L0X
+	default 0x2B
+	help
+	  Specify the I2C slave address for the Vl53L0X.
+
+config Vl53L0X_I2C_DEV_NAME
+	string "I2C master where Vl53L0X is connected"
+	depends on Vl53L0X
+	default "I2C_0"
+	help
+	  Specify the device name of the I2C master device to which Vl53L0X is
+	  connected.
+
+#config Vl53L0X_PROX_CHANNEL
+#	int
+#	default 3
+#	depends on Vl53L0X
+#	prompt "Proximity channel to use"
+#	help
+#	  The SX9500 offers 4 separate proximity channels.  Choose which one
+#	  you are using.  Valid numbers are 0 to 3.
+
+choice
+	prompt "Vl53L0X trigger mode"
+	depends on Vl53L0X
+	default Vl53L0X_TRIGGER_GLOBAL_THREAD
+
+config Vl53L0X_TRIGGER_NONE
+	bool "No trigger"
+
+config Vl53L0X_TRIGGER_GLOBAL_THREAD
+	depends on GPIO
+	select Vl53L0X_TRIGGER
+	bool "Use global thread"
+
+config Vl53L0X_TRIGGER_OWN_THREAD
+	depends on GPIO
+	select Vl53L0X_TRIGGER
+	bool "Use own thread"
+
+endchoice
+
+config Vl53L0X_TRIGGER
+	bool
+	depends on Vl53L0X
+
+config Vl53L0X_GPIO_CONTROLLER
+	string "GPIO controller for Vl53L0X interrupt"
+	depends on Vl53L0X && Vl53L0X_TRIGGER
+	default GPIO_1
+	help
+	  Specify the device name of the GPIO controller the Vl53L0X interrupt
+	  is connected to.
+
+config Vl53L0X_GPIO_PIN
+	int "GPIO pin for Vl53L0X interrupt"
+	depends on Vl53L0X && Vl53L0X_TRIGGER
+	default 3
+
+config Vl53L0X_THREAD_STACK_SIZE
+	int "Sensor delayed work thread stack size"
+	depends on Vl53L0X && Vl53L0X_TRIGGER_OWN_THREAD
+	default 1024
+
+config Vl53L0X_THREAD_PRIORITY
+	int "Thread priority"
+	depends on Vl53L0X && Vl53L0X_TRIGGER_OWN_THREAD
+	default 10
