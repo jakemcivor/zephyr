@@ -14,7 +14,7 @@
 
 static void trigger_handler(struct device *dev, struct sensor_trigger *trigger)
 {
-	/* tbd
+	/* tbd */
 }
 
 void main(void)
