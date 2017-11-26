@@ -1,0 +1,79 @@
+/* Code for Task 2: project to fetch data from 4 onboard sensors 
+   and send to serial port */
+   
+#include <zephyr.h>
+#include <device.h>
+#include <sensor.h>
+#include <misc/printk.h>
+
+#define DECIMATION_FACTOR	4
+
+/* == Sensor READ section == */
+/* -- Basic steps: Init, trigger, read; each sensor */
+
+/* Init all sensors, check no errors, report error and halt if found */
+
+void main(void)
+{
+	
+/* >>> repeat loop start   	*/
+while (1)
+   /* Sensor 1: HTS221		*/
+   /* no trigger required	*/
+
+   /* Init HTS221		*/
+   struct sensor_value temp, hum
+   struct device *dev = device_get_binding("HTS221");
+
+   if (dev == NULL) {
+	printk("Could not open HTS221 device\n");
+   	return;
+   }
+   
+/* ------------------------------------ */
+/* Sesnor 1: TEMP / Humidity (HTS221)	*/
+/* ------------------------------------ */
+   if (sensor_sample_fetch(dev) < 0) {
+	   printk("Sensor sample update error\n");
+           return;
+	}
+   if (sensor_channel_get(dev, SENSOR_CHAN_TEMP, &temp) < 0) {
+		printf("Cannot read HTS221 temperature channel\n");
+		return;
+   tempc = sensor_value_to_double(&temp)  /* convert to fp number */
+
+/* ----------------------------------------*/
+/* Sensor 2: 3-axis magnetometer (LIS3MDL) */
+/* ----------------------------------------*/
+/* init	*/
+   struct sensor_value magn[3];
+/* calibrate */
+
+/* set trigger? */
+    if (sensor_trigger_set(dev, &trig, trigger_handler)) {
+	printf("Could not set trigger\n");
+	return;
+
+   sensor_channel_get(dev, SENSOR_CHAN_MAGN_XYZ, magn);
+/* do conversions (if nec)
+
+/* Sensor 3: 3D accelerometer and 3D gyroscope (LSM6DSL)
+   /* init
+   struct sensor_value accel[3], magn[3];
+   /* set trigger?
+   /* sensor_sample_fetch()
+   sensor_channel_get(dev, SENSOR_CHAN_ACCEL_XYZ, accel);
+
+   /* read/convert data */
+
+/* Sensor 4: digital output barometer (LPS22HB)
+/* init
+/* set trigger?
+/* - tbd
+/* read/convert data
+
+/* Send formatted data to Serial Out
+
+/* wait 2s
+
+/* >>> end loop
